@@ -1,8 +1,14 @@
 {
   "bindings": [
     {
-      "authLevel": "anonymous",
+      "type": "timerTrigger",
+      "schedule": "*/15 * * * * *",
+      "name": "timer",
+      "direction": "in"
+    },
+    {
       "type": "httpTrigger",
+      "authLevel": "anonymous",
       "direction": "in",
       "name": "req",
       "methods": ["get", "post"]
