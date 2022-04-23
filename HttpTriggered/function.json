@@ -1,12 +1,6 @@
 {
   "bindings": [
     {
-      "type": "timerTrigger",
-      "schedule": "*/15 * * * * *",
-      "name": "timer",
-      "direction": "in"
-    },
-    {
       "type": "httpTrigger",
       "authLevel": "anonymous",
       "direction": "in",
