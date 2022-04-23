@@ -1,0 +1,5 @@
+# Files not required in the deployed function
+
+*.js.map
+.git*
+.vscode
