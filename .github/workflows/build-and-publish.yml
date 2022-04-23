@@ -28,7 +28,7 @@ jobs:
           npm run test --if-present
           popd
       - name: "Run Azure Functions Action"
-        uses: Royston-Shufflebotham-i2/functions-action@dev6
+        uses: Royston-Shufflebotham-i2/functions-action@dev7
         id: fa
         with:
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
