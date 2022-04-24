@@ -14,47 +14,19 @@ module.exports = async function (context, req) {
 
   process.env.AZURE_LOG_LEVEL = "verbose";
 
-  context.log.info("X1");
-
-  for (const key of Object.keys(process.env)) {
-    context.log.info(`ENV ${key}=${process.env[key]}`);
-  }
-
-  try {
-    context.log.info("X2");
-    const credential = new DefaultAzureCredential({
-      managedIdentityClientId: "e43d6465-9ea7-414a-a3ee-c60599041cae",
-    });
-    context.log.info("X3");
-    const result = await credential.getToken(
-      "https://graph.microsoft.com/.default"
-    );
-    context.log.info("X4");
-
-    context.log.info("Default", JSON.stringify(result));
-  } catch (e) {
-    context.log.info("X5");
-
-    context.log.error(`Default fail`, e);
-  }
-
-  context.log.info("X6");
-
-  try {
-    const credential = new ManagedIdentityCredential();
-    const result = await credential.getToken(
-      "https://graph.microsoft.com/.default"
-    );
-    context.log.info("Managed", JSON.stringify(result));
-  } catch (e) {
-    context.log.error(`Managed fail`, e);
-  }
-
+  // TODO: env var
   const vaultName = "kv-roystonapplication";
+  // TODO: env var
   const secretName = "cosmos-roystonapplication-PrimaryConnectionString";
 
   const url = `https://${vaultName}.vault.azure.net`;
-  const client = new SecretClient(url, new ManagedIdentityCredential());
+  const client = new SecretClient(
+    url,
+    new DefaultAzureCredential({
+      // TODO: env var
+      managedIdentityClientId: "e43d6465-9ea7-414a-a3ee-c60599041cae",
+    })
+  );
 
   const secret = await client.getSecret(secretName);
   context.log.info("secret", secret.name);
