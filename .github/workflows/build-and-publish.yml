@@ -21,15 +21,16 @@ jobs:
       - name: "Resolve Project Dependencies Using Npm"
         shell: bash
         run: |
+          pushd code
           npm ci
           npm run build --if-present
           npm run test --if-present
           npm prune --production
-          mv node_modules dist
+          popd
       - name: "Run Azure Functions Action"
         uses: Royston-Shufflebotham-i2/functions-action@v1.4.5-fixedA
         id: fa
         with:
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-          package: dist
+          package: code
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}

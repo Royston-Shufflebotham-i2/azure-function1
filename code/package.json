@@ -5,9 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prebuild": "copyfiles -u 1 src/.funcignore dist",
-    "build": "tsc -p .",
-    "postbuild": "copyfiles -u 1 src/**/function.json dist",
+    "build": "ncc build --minify --out lib src/index.ts",
     "test": "echo test step"
   },
   "author": "",
@@ -18,7 +16,7 @@
   "devDependencies": {
     "@azure/functions": "^3.0.0",
     "@types/node": "^17.0.25",
-    "copyfiles": "^2.4.1",
+    "@vercel/ncc": "^0.33.4",
     "typescript": "^4.6.3"
   },
   "dependencies": {

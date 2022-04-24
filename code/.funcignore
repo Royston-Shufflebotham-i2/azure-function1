@@ -1,6 +1,5 @@
 # Files not required in the deployed function
 
 *.js.map
-.git*
-.vscode
+node_modules/
 src/

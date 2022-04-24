@@ -1,4 +1,6 @@
 {
+  "scriptFile": "../lib/index.js",
+  "entryPoint": "timerTrigger",
   "bindings": [
     {
       "type": "timerTrigger",
