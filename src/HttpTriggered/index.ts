@@ -14,15 +14,25 @@ module.exports = async function (context, req) {
 
   process.env.AZURE_LOG_LEVEL = "verbose";
 
+  console.log("X1");
+
   try {
+    console.log("X2");
     const credential = new DefaultAzureCredential();
+    console.log("X3");
     const result = await credential.getToken(
       "https://graph.microsoft.com/.default"
     );
+    console.log("X4");
+
     console.log("Default", JSON.stringify(result));
   } catch (e) {
+    console.log("X5");
+
     console.log(`Default fail`, e);
   }
+
+  console.log("X6");
 
   try {
     const credential = new ManagedIdentityCredential();
