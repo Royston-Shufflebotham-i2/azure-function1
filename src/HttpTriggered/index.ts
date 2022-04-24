@@ -1,6 +1,6 @@
 import { CosmosClient } from "@azure/cosmos";
 
-import { DefaultAzureCredential } from "@azure/identity";
+import { ManagedIdentityCredential } from "@azure/identity";
 import { SecretClient } from "@azure/keyvault-secrets";
 
 // const cosmosClient = new CosmosClient({
@@ -9,7 +9,7 @@ import { SecretClient } from "@azure/keyvault-secrets";
 module.exports = async function (context, req) {
   context.log("JavaScript HTTP function processed a request.");
 
-  const credential = new DefaultAzureCredential();
+  const credential = new ManagedIdentityCredential();
 
   const vaultName = "kv-roystonapplication";
   const secretName = "cosmos-roystonapplication-PrimaryConnectionString";
