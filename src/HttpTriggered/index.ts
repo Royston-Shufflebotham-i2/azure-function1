@@ -3,8 +3,7 @@ import type { Context } from "@azure/functions";
 import { DefaultAzureCredential } from "@azure/identity";
 import { SecretClient } from "@azure/keyvault-secrets";
 
-const vaultName = process.env.I2_KEY_VAULT_NAME; // kv-blah-blah
-const secretName = process.env.I2_COSMOS_CONNECTION_STRING_SECRET_NAME;
+const secretFullPath = process.env.I2_COSMOS_CONNECTION_STRING_SECRET_NAME; // keyvaultname/secretname
 const managedIdentityClientId = process.env.I2_MANAGED_IDENTITY_CLIENT_ID;
 
 module.exports = async function (context: Context, req) {
@@ -12,6 +11,7 @@ module.exports = async function (context: Context, req) {
 
   process.env.AZURE_LOG_LEVEL = "verbose";
 
+  const [vaultName, secretName] = secretFullPath.split("/");
   context.log.info("vars", vaultName, secretName, managedIdentityClientId);
 
   const credential = new DefaultAzureCredential({
