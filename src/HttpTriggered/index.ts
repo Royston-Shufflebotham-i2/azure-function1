@@ -10,38 +10,38 @@ import { SecretClient } from "@azure/keyvault-secrets";
 // });
 
 module.exports = async function (context, req) {
-  context.log("JavaScript HTTP function processed a request.");
+  context.log.info("JavaScript HTTP function processed a request.");
 
   process.env.AZURE_LOG_LEVEL = "verbose";
 
-  console.log("X1");
+  context.log.info("X1");
 
   try {
-    console.log("X2");
+    context.log.info("X2");
     const credential = new DefaultAzureCredential();
-    console.log("X3");
+    context.log.info("X3");
     const result = await credential.getToken(
       "https://graph.microsoft.com/.default"
     );
-    console.log("X4");
+    context.log.info("X4");
 
-    console.log("Default", JSON.stringify(result));
+    context.log.info("Default", JSON.stringify(result));
   } catch (e) {
-    console.log("X5");
+    context.log.info("X5");
 
-    console.log(`Default fail`, e);
+    context.log.error(`Default fail`, e);
   }
 
-  console.log("X6");
+  context.log.info("X6");
 
   try {
     const credential = new ManagedIdentityCredential();
     const result = await credential.getToken(
       "https://graph.microsoft.com/.default"
     );
-    console.log("Managed", JSON.stringify(result));
+    context.log.info("Managed", JSON.stringify(result));
   } catch (e) {
-    console.log(`Managed fail`, e);
+    context.log.error(`Managed fail`, e);
   }
 
   const vaultName = "kv-roystonapplication";
@@ -51,8 +51,8 @@ module.exports = async function (context, req) {
   const client = new SecretClient(url, new ManagedIdentityCredential());
 
   const secret = await client.getSecret(secretName);
-  console.log("secret", secret.name);
-  console.log("properties", JSON.stringify(secret.properties));
+  context.log.info("secret", secret.name);
+  context.log.info("properties", JSON.stringify(secret.properties));
 
   if (req.scheduleStatus) {
     context.res = {
