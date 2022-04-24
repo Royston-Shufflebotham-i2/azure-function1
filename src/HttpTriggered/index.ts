@@ -1,5 +1,5 @@
 import { CosmosClient } from "@azure/cosmos";
-
+import type { Context } from "@azure/functions";
 import { DefaultAzureCredential } from "@azure/identity";
 import { SecretClient } from "@azure/keyvault-secrets";
 
@@ -7,10 +7,12 @@ const vaultName = process.env.I2_KEY_VAULT_NAME; // kv-blah-blah
 const secretName = process.env.I2_COSMOS_CONNECTION_STRING_SECRET_NAME;
 const managedIdentityClientId = process.env.I2_MANAGED_IDENTITY_CLIENT_ID;
 
-module.exports = async function (context, req) {
+module.exports = async function (context: Context, req) {
   context.log.info("JavaScript HTTP function processed a request.");
 
   process.env.AZURE_LOG_LEVEL = "verbose";
+
+  context.log.info("vars", vaultName, secretName, managedIdentityClientId);
 
   const credential = new DefaultAzureCredential({
     managedIdentityClientId,
