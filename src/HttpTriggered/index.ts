@@ -16,6 +16,10 @@ module.exports = async function (context, req) {
 
   context.log.info("X1");
 
+  for (const key of Object.keys(process.env)) {
+    context.log.info(`ENV ${key}=${process.env[key]}`);
+  }
+
   try {
     context.log.info("X2");
     const credential = new DefaultAzureCredential();
