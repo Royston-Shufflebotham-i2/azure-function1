@@ -38,7 +38,7 @@ module.exports = async function (context, req) {
   const secretName = "cosmos-roystonapplication-PrimaryConnectionString";
 
   const url = `https://${vaultName}.vault.azure.net`;
-  const client = new SecretClient(url, new DefaultAzureCredential());
+  const client = new SecretClient(url, new ManagedIdentityCredential());
 
   const secret = await client.getSecret(secretName);
   console.log("secret", secret.name);
