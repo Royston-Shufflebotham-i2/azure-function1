@@ -29,7 +29,7 @@ module.exports = async function (context: Context, req) {
   );
 
   const databaseId = "teamsync-db";
-  const containerId = "teamsync-container";
+  const containerId = "teamsync-teamlessUsers";
 
   const cosmosClient = new CosmosClient(cosmosConnectionStringSecret.value);
   const dbResponse = await cosmosClient.databases.createIfNotExists({
@@ -38,19 +38,19 @@ module.exports = async function (context: Context, req) {
   const database = dbResponse.database;
   const coResponse = await database.containers.createIfNotExists({
     id: containerId,
-    partitionKey: "/id",
+    partitionKey: "/user",
     uniqueKeyPolicy: {
       uniqueKeys: [
         {
-          paths: ["/id"],
+          paths: ["/user"],
         },
       ],
     },
   });
   const container = coResponse.container;
   const item = {
-    id: Date.now().toString(),
-    somethingElse: new Date().toString(),
+    user: Date.now().toString(),
+    teamlessSince: new Date().toISOString(),
   };
   await container.items.create(item);
 
