@@ -22,7 +22,9 @@ module.exports = async function (context, req) {
 
   try {
     context.log.info("X2");
-    const credential = new DefaultAzureCredential();
+    const credential = new DefaultAzureCredential({
+      managedIdentityClientId: "e43d6465-9ea7-414a-a3ee-c60599041cae",
+    });
     context.log.info("X3");
     const result = await credential.getToken(
       "https://graph.microsoft.com/.default"
