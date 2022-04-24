@@ -1,3 +1,4 @@
 # Files not required in the deployed function
 
-node_modules
+src/
+code/src
