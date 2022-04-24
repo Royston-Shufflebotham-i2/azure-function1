@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "ncc build --minify --out lib src/index.ts",
+    "build": "ncc build --minify --out deploy src/index.ts",
     "test": "echo test step"
   },
   "author": "",

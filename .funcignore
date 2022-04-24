@@ -1,6 +1,0 @@
-# Files not required in the deployed function
-
-src
-src/
-src/**
-code/src

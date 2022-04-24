@@ -1,5 +1,5 @@
 {
-  "scriptFile": "../lib/index.js",
+  "scriptFile": "../index.js",
   "entryPoint": "httpTrigger",
   "bindings": [
     {
