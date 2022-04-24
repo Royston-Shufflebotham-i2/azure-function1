@@ -1,43 +1,56 @@
 import { CosmosClient } from "@azure/cosmos";
 
-import {
-  DefaultAzureCredential,
-  ManagedIdentityCredential,
-} from "@azure/identity";
+import { DefaultAzureCredential } from "@azure/identity";
 import { SecretClient } from "@azure/keyvault-secrets";
 
-// const cosmosClient = new CosmosClient({
-// });
+const vaultName = process.env.I2_KEY_VAULT_NAME; // kv-blah-blah
+const secretName = process.env.I2_COSMOS_CONNECTION_STRING_SECRET_NAME;
+const managedIdentityClientId = process.env.I2_MANAGED_IDENTITY_CLIENT_ID;
 
 module.exports = async function (context, req) {
   context.log.info("JavaScript HTTP function processed a request.");
 
   process.env.AZURE_LOG_LEVEL = "verbose";
 
-  // TODO: env var
-  const vaultName = "kv-roystonapplication";
-  // TODO: env var
-  const secretName = "cosmos-roystonapplication-PrimaryConnectionString";
+  const credential = new DefaultAzureCredential({
+    managedIdentityClientId,
+  });
 
   const url = `https://${vaultName}.vault.azure.net`;
-  const client = new SecretClient(
-    url,
-    new DefaultAzureCredential({
-      // TODO: env var
-      managedIdentityClientId: "e43d6465-9ea7-414a-a3ee-c60599041cae",
-    })
+  const client = new SecretClient(url, credential);
+
+  const cosmosConnectionStringSecret = await client.getSecret(secretName);
+  context.log.info("secret", cosmosConnectionStringSecret.name);
+  context.log.info(
+    "properties",
+    JSON.stringify(cosmosConnectionStringSecret.properties)
   );
 
-  const secret = await client.getSecret(secretName);
-  context.log.info("secret", secret.name);
-  context.log.info("properties", JSON.stringify(secret.properties));
+  const databaseId = "teamsync-db";
+  const containerId = "teamsync-container";
 
-  if (req.scheduleStatus) {
-    context.res = {
-      body: `Timer-triggered: ${JSON.stringify(req)}`,
-    };
-    return;
-  }
+  const cosmosClient = new CosmosClient(cosmosConnectionStringSecret.value);
+  const dbResponse = await cosmosClient.databases.createIfNotExists({
+    id: databaseId,
+  });
+  const database = dbResponse.database;
+  const coResponse = await database.containers.createIfNotExists({
+    id: containerId,
+    partitionKey: "/id",
+    uniqueKeyPolicy: {
+      uniqueKeys: [
+        {
+          paths: ["/id"],
+        },
+      ],
+    },
+  });
+  const container = coResponse.container;
+  const item = {
+    id: Date.now().toString(),
+    somethingElse: new Date().toString(),
+  };
+  await container.items.create(item);
 
   const name = req.query.name || (req.body && req.body.name);
   const responseMessage = name
