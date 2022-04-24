@@ -1,6 +1,9 @@
 import { CosmosClient } from "@azure/cosmos";
 
-import { ManagedIdentityCredential } from "@azure/identity";
+import {
+  DefaultAzureCredential,
+  ManagedIdentityCredential,
+} from "@azure/identity";
 import { SecretClient } from "@azure/keyvault-secrets";
 
 // const cosmosClient = new CosmosClient({
@@ -9,13 +12,33 @@ import { SecretClient } from "@azure/keyvault-secrets";
 module.exports = async function (context, req) {
   context.log("JavaScript HTTP function processed a request.");
 
-  const credential = new ManagedIdentityCredential();
+  process.env.AZURE_LOG_LEVEL = "verbose";
+
+  try {
+    const credential = new DefaultAzureCredential();
+    const result = await credential.getToken(
+      "https://graph.microsoft.com/.default"
+    );
+    console.log("Default", JSON.stringify(result));
+  } catch (e) {
+    console.log(`Default fail`, e);
+  }
+
+  try {
+    const credential = new ManagedIdentityCredential();
+    const result = await credential.getToken(
+      "https://graph.microsoft.com/.default"
+    );
+    console.log("Managed", JSON.stringify(result));
+  } catch (e) {
+    console.log(`Managed fail`, e);
+  }
 
   const vaultName = "kv-roystonapplication";
   const secretName = "cosmos-roystonapplication-PrimaryConnectionString";
 
   const url = `https://${vaultName}.vault.azure.net`;
-  const client = new SecretClient(url, credential);
+  const client = new SecretClient(url, new DefaultAzureCredential());
 
   const secret = await client.getSecret(secretName);
   console.log("secret", secret.name);
