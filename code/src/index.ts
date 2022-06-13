@@ -7,6 +7,18 @@ const managedIdentityClientId = process.env.I2_MANAGED_IDENTITY_CLIENT_ID;
 exports.httpTrigger = async (context: Context, req: HttpRequest) => {
   context.log.info("HTTP trigger processing request.");
 
+  if (req.method === "GET") {
+    const pkg = require("./package.json");
+
+    return {
+      headers: {
+        "content-type": "text/html",
+      },
+      status: 200,
+      body: `Function version ${pkg.version}`,
+    };
+  }
+
   const name = req.query.name || (req.body && req.body.name);
   const result = await handleRequest(context, name);
 
