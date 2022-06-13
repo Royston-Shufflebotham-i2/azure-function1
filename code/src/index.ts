@@ -1,7 +1,5 @@
 import { CosmosClient } from "@azure/cosmos";
 import type { Context, HttpRequest, Timer } from "@azure/functions";
-import { DefaultAzureCredential } from "@azure/identity";
-import { SecretClient } from "@azure/keyvault-secrets";
 
 const secretFullPath = process.env.I2_COSMOS_CONNECTION_STRING_SECRET_NAME; // keyvaultname/secretname
 const managedIdentityClientId = process.env.I2_MANAGED_IDENTITY_CLIENT_ID;
@@ -29,24 +27,12 @@ async function handleRequest(context: Context, name?: string) {
   const [vaultName, secretName] = secretFullPath.split("/");
   context.log.info("vars", vaultName, secretName, managedIdentityClientId);
 
-  const credential = new DefaultAzureCredential({
-    managedIdentityClientId,
-  });
-
-  const url = `https://${vaultName}.vault.azure.net`;
-  const client = new SecretClient(url, credential);
-
-  const cosmosConnectionStringSecret = await client.getSecret(secretName);
-  context.log.info("secret", cosmosConnectionStringSecret.name);
-  context.log.info(
-    "properties",
-    JSON.stringify(cosmosConnectionStringSecret.properties)
-  );
+  const cosmosConnectionString = process.env.I2_COSMOS_CONNECTION_STRING;
 
   const databaseId = "teamsync-db";
   const containerId = "teamsync-teamlessUsers";
 
-  const cosmosClient = new CosmosClient(cosmosConnectionStringSecret.value);
+  const cosmosClient = new CosmosClient(cosmosConnectionString);
   const dbResponse = await cosmosClient.databases.createIfNotExists({
     id: databaseId,
   });
